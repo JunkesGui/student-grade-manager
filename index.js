@@ -16,8 +16,8 @@ const server = http.createServer((request, response) =>{
             response.writeHead(200, {"content-type": "application/json"});
             response.end(JSON.stringify(grades));
         } else if (url === '/grades' && method === 'POST'){
-            const {id, studentName, subject, grade} = JSON.parse(body);
-            const newGrade = {id: v4, studentName, subject, grade}
+            const {studentName, subject, grade} = JSON.parse(body);
+            const newGrade = {id: v4(), studentName, subject, grade}
             grades.push(newGrade)
             response.writeHead(201, {'content-type': 'application/json'})
             response.end(JSON.stringify(newGrade))
