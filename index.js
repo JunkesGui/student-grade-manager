@@ -12,6 +12,8 @@ const server = http.createServer((request, response) =>{
         body += chunk.toString();
     })
     request.on('end', () =>{
+        const id = url.split('/')[2];
+
         if (url === '/grades' && method === 'GET'){
             response.writeHead(200, {"content-type": "application/json"});
             response.end(JSON.stringify(grades));
@@ -21,7 +23,20 @@ const server = http.createServer((request, response) =>{
             grades.push(newGrade)
             response.writeHead(201, {'content-type': 'application/json'})
             response.end(JSON.stringify(newGrade))
-        }else{
+        }else if(url.startsWith('/grades/') && method === 'PUT'){
+            const {studentName, subject, grade} = JSON.parse(body);
+            const gradeToUpdate = grades.find((g) => g.id === id)
+            if(gradeToUpdate){
+                gradeToUpdate.studentName = studentName;
+                gradeToUpdate.subject = subject;
+                gradeToUpdate.grade = grade;
+                response.writeHead(200, {"content-type": "aplication/json"});
+                response.end(JSON.stringify(gradeToUpdate));
+            }else{
+                response.writeHead(404, {"content-type": "aplication/json"});
+                response.end(JSON.stringify({message: "Grade not found"}));
+            }
+        } else{
             response.writeHead(404, {'content-type': 'application/json'});
             response.end(JSON.stringify({message: 'Route not found'}));
         }
